@@ -32,6 +32,10 @@ object RDDRelationMySQL {
 
     dishes.foreach { x => logger.info(x.toString) }
     
+    // based on http://spark.apache.org/docs/latest/sql-programming-guide.html
+    restaurants.select(restaurants("id"), restaurants("name")).show
+    dishes.printSchema
+    
     logger.info ("... all done in: " + (System.currentTimeMillis - startTS) + "ms")
     sc.stop()
   }
