@@ -4,6 +4,8 @@ import org.apache.spark.sql.functions._
 
 object RDDRelationMySQL {
   def main(args: Array[String]) {
+    val startTS = System.currentTimeMillis
+    
     val url = "jdbc:mysql://localhost:3306/presto?user=prestouser&password=password"
 
     val sparkConf = new SparkConf().setAppName("RDDRelation").setMaster("local")
@@ -27,6 +29,9 @@ object RDDRelationMySQL {
     println ("tags RDD size: " + tags.collectAsList().size())
     println ("likes RDD size: " + likes.collectAsList().size())
 
+    likes.foreach { x => println(x) }
+    
+    println ("done in: " + (System.currentTimeMillis - startTS))
     sc.stop()
   }
 }
