@@ -1,13 +1,14 @@
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.functions._
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory;
 
 object RDDRelationMySQL {
   def main(args: Array[String]) {
     val startTS = System.currentTimeMillis
-    
+    val logger = LoggerFactory.getLogger("RDDRelationMySQL");
     val url = "jdbc:mysql://localhost:3306/presto?user=prestouser&password=password"
-
     val sparkConf = new SparkConf().setAppName("RDDRelation").setMaster("local")
     val sc = new SparkContext(sparkConf)
     val sqlContext = new SQLContext(sc)
@@ -22,16 +23,16 @@ object RDDRelationMySQL {
     val tags = sqlContext.jdbc(url, "tag")
     val likes = sqlContext.jdbc(url, "activity_log").filter("activity_type = 11")
     
-    println ("restaurants RDD size: " + restaurants.collectAsList().size())
-    println ("dish RDD size: " + dishes.collectAsList().size())
-    println ("users RDD size: " + users.collectAsList().size())
-    println ("friends RDD size: " + friends.collectAsList().size())
-    println ("tags RDD size: " + tags.collectAsList().size())
-    println ("likes RDD size: " + likes.collectAsList().size())
+    logger.info ("restaurants RDD size: " + restaurants.collectAsList().size())
+    logger.info ("dish RDD size: " + dishes.collectAsList().size())
+    logger.info ("users RDD size: " + users.collectAsList().size())
+    logger.info ("friends RDD size: " + friends.collectAsList().size())
+    logger.info ("tags RDD size: " + tags.collectAsList().size())
+    logger.info ("likes RDD size: " + likes.collectAsList().size())
 
-    likes.foreach { x => println(x) }
+    dishes.foreach { x => logger.info(x.toString) }
     
-    println ("done in: " + (System.currentTimeMillis - startTS))
+    logger.info ("... all done in: " + (System.currentTimeMillis - startTS) + "ms")
     sc.stop()
   }
 }
